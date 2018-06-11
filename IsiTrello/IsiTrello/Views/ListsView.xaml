@@ -1,0 +1,131 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:IsiTrello.ViewModel;assembly=IsiTrello"
+             xmlns:infras="clr-namespace:IsiTrello.Infrastructures;assembly:IsiTrello"
+             xmlns:controls="clr-namespace:CarouselView.FormsPlugin.Abstractions;assembly=CarouselView.FormsPlugin.Abstractions"
+             x:Class="IsiTrello.ListsView"
+             Title="{Binding Path=name}" x:Name="ListView" BackgroundColor="{StaticResource CardBackgroundColor}">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <infras:BoolInverter x:Key="cnvBoolInvert"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+        <controls:CarouselViewControl ItemsSource="{Binding cards}" BackgroundColor="Transparent" HorizontalOptions="Fill" 
+                         Position="{Binding Position, Mode=TwoWay}" x:Name="Carousel" Orientation="Horizontal" ShowIndicators="True" >
+        <controls:CarouselViewControl.ItemTemplate>
+                <DataTemplate>
+                <Grid Padding="5,0,5,7">
+                    <ScrollView  HorizontalOptions="Fill" VerticalOptions="Start" Padding="5" 
+                                 BackgroundColor="Transparent" Orientation="Vertical" x:Name="ScrollCard">
+                        <StackLayout BackgroundColor="Transparent" Padding="5,10" VerticalOptions="StartAndExpand" HorizontalOptions="Fill">
+                            <!-- Titre de la carte -->
+                            <Label Text="{Binding Path=name}" HorizontalOptions="Fill" VerticalOptions="Start" Style="{StaticResource LabelTitle}" />
+                            <!-- Afficahge des Etiquettes avec leur libelle -->
+                            <infras:GridView ItemsSource="{Binding Path=labels}" MaxColumns="3" BackgroundColor="Transparent"
+                                         TileHeight="40" HorizontalOptions="Fill"  VerticalOptions="Start"
+                                         ColumnSpacing="1" RowSpacing="1">
+                                <infras:GridView.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackLayout HorizontalOptions="Fill" VerticalOptions="Fill" HeightRequest="40"
+                                                 BackgroundColor="{Binding Path=color}" Margin="0">
+                                            <StackLayout.Triggers>
+                                                <DataTrigger TargetType="StackLayout" Binding="{Binding Path=color}" Value="Transparent">
+                                                    <Setter Property="BackgroundColor" Value="#959DA1" />
+                                                </DataTrigger>
+                                            </StackLayout.Triggers>
+                                            <Label HorizontalTextAlignment="Center" VerticalTextAlignment="End" LineBreakMode="WordWrap" 
+                                               Text="{Binding Path=name}" TextColor="White" VerticalOptions="CenterAndExpand">
+                                                <Label.Font>
+                                                    <OnPlatform x:TypeArguments="Font" Android="Bold, Small" WinPhone="Bold, 11" iOS="Bold, 11"/>
+                                                </Label.Font>
+                                            </Label>
+                                        </StackLayout>
+                                    </DataTemplate>
+                                </infras:GridView.ItemTemplate>
+                            </infras:GridView>
+                            <!-- Date echeance si necessaire -->
+                            <StackLayout HorizontalOptions="Center" VerticalOptions="Fill" HeightRequest="40" Padding="10,0" Margin="0"
+                                     BackgroundColor="Transparent" IsVisible="False">
+                                <StackLayout.Triggers>
+                                    <DataTrigger TargetType="StackLayout" Binding="{Binding Path=HasDue}" Value="True">
+                                        <Setter Property="IsVisible" Value="True" />
+                                    </DataTrigger>
+                                </StackLayout.Triggers>
+                                <Label Text="{Binding Path=dueDate}" HorizontalTextAlignment="Center" VerticalTextAlignment="End" TextColor="Red"
+                                   VerticalOptions="CenterAndExpand">
+                                    <Label.Triggers>
+                                        <DataTrigger TargetType="Label" Binding="{Binding Path=dueComplete}" Value="True">
+                                            <Setter Property="TextColor" Value="#424242" />
+                                        </DataTrigger>
+                                    </Label.Triggers>
+                                </Label>
+                            </StackLayout>
+                            <!-- Contenu de la carte -->
+                            <infras:LinksLabel Text="{Binding Path=desc}" HorizontalOptions="Start" VerticalOptions="Start" />
+                            <!-- Affichage des pieces jointes lorsqu'il y en a -->
+                            <infras:GridView MaxColumns="3" TileHeight="40" IsVisible="{Binding Path=HasAttachment}"
+                                         ItemsSource="{Binding Path=attachments}" BackgroundColor="Transparent"
+                                         HorizontalOptions="Start" VerticalOptions="Start">
+                                <infras:GridView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Button HorizontalOptions="Fill" VerticalOptions="Fill" Text="{Binding Path=name}" BorderRadius="7"
+                                            Command="{Binding Path=BindingContext.GoToAttachment, Source={x:Reference ScrollCard}}" CommandParameter="{Binding Path=url}" >
+                                            <Button.Style>
+                                                <OnPlatform x:TypeArguments="Style"
+                                                        WinPhone="{StaticResource AttachBtn}"
+                                                        iOS="{StaticResource AttachBtn}"/>
+                                            </Button.Style>
+                                        </Button>
+                                    </DataTemplate>
+                                </infras:GridView.ItemTemplate>
+                            </infras:GridView>
+                            <!-- Affichage des Checklists lorsqu'il y en a -->
+                            <infras:GridView IsVisible="{Binding Path=HasChecklist}" ItemsSource="{Binding Path=checklists}" HorizontalOptions="Center"
+                                         VerticalOptions="StartAndExpand" TileHeight="Auto" RowSpacing="5">
+                                <infras:GridView.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackLayout HorizontalOptions="Fill" VerticalOptions="Start">
+                                            <Label Text="{Binding Path=namelist}" Style="{StaticResource LabelSubt}"/>
+                                            <infras:GridView MaxColumns="1" TileHeight="Auto" ItemsSource="{Binding Path=listitems}" HorizontalOptions="Center"
+                                                         VerticalOptions="Fill">
+                                                <infras:GridView.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="25"/>
+                                                                <ColumnDefinition Width="Auto"/>
+                                                            </Grid.ColumnDefinitions>
+                                                            <Grid.RowDefinitions>
+                                                                <RowDefinition Height="Auto"/>
+                                                            </Grid.RowDefinitions>
+                                                            <Image Source="{Binding Path=ischecked, Converter={StaticResource CheckToImage}}" Aspect="AspectFit"
+                                                               HorizontalOptions="Start" VerticalOptions="Start" HeightRequest="25"/>
+                                                            <StackLayout HorizontalOptions="Fill" VerticalOptions="Fill" Grid.Column="1" Grid.Row="0" >
+                                                                <Label Text="{Binding Path=itemname}" LineBreakMode="WordWrap" 
+                                                                   HorizontalTextAlignment="Start" VerticalOptions="Center"/>
+                                                            </StackLayout>
+                                                        </Grid>
+                                                    </DataTemplate>
+                                                </infras:GridView.ItemTemplate>
+                                            </infras:GridView>
+                                        </StackLayout>
+                                    </DataTemplate>
+                                </infras:GridView.ItemTemplate>
+                            </infras:GridView>
+                        </StackLayout>
+                    </ScrollView>
+                    <!-- Indicateur d'activite -->
+                    <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" IsVisible="{Binding Path=IsBusy}" BackgroundColor="#7F000000" >
+                        <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"  BackgroundColor="{StaticResource CardBackgroundColor}" Padding="20">
+                            <Label Text="Loading..." TextColor="Gray" HorizontalOptions="Center" />
+                            <ActivityIndicator IsRunning="{Binding Path=IsBusy}" Color="Accent" />
+                        </StackLayout>
+                    </StackLayout>
+                </Grid>
+            </DataTemplate>
+            </controls:CarouselViewControl.ItemTemplate>
+        </controls:CarouselViewControl>
+
+</ContentPage>

@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:IsiTrello.ViewModel;assembly=IsiTrello"
+             xmlns:infras="clr-namespace:IsiTrello.Infrastructures;assembly:IsiTrello"
+             x:Class="IsiTrello.BoardList"
+             BackgroundColor="{StaticResource BackgroundColor}"
+             Title="IsiTrello" x:Name="BoardL">
+    <!-- 
+  <ContentPage.ToolbarItems>
+    <ToolbarItem Name="Refresh" Command="{Binding Path=RefreshBoard}" Order="Primary"/>
+  </ContentPage.ToolbarItems>
+  -->
+    <ContentPage.Content>
+
+        <Grid >
+            <StackLayout>
+                <StackLayout Margin="15,10">
+                    <Label Text="{Binding ListName}" Style="{StaticResource LabelTitle}" HorizontalTextAlignment="Center"/>
+                </StackLayout>
+                <ListView ItemsSource="{Binding Boardlist}"  BackgroundColor="{StaticResource BackgroundColor}"
+              SelectedItem="{Binding Path=BindingContext.SelectedBoard, Source={x:Reference BoardL}, Mode=TwoWay}"
+              SeparatorVisibility="None" HasUnevenRows="True" Margin="0,5" >
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <ViewCell>
+                                <StackLayout HorizontalOptions="Fill" VerticalOptions="Fill" BackgroundColor="{Binding backgroundColor}" >
+                                    <Label Text="{Binding BoardName}" FontSize="Medium" VerticalOptions="Fill" HorizontalOptions="Fill" VerticalTextAlignment="Center" 
+                                           LineBreakMode="WordWrap" HorizontalTextAlignment="Center" Margin="10" BackgroundColor="Transparent" TextColor="White" />
+                                    </StackLayout>
+                            </ViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </StackLayout>
+            <!-- Indicateur d'activite -->
+            <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" IsVisible="{Binding Path=IsBusy}" BackgroundColor="#7F000000" >
+                <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"  BackgroundColor="{StaticResource CardBackgroundColor}" Padding="20">
+                    <Label Text="Loading..." TextColor="Gray" HorizontalOptions="Center" />
+                    <ActivityIndicator IsRunning="{Binding Path=IsBusy}" Color="Accent" />
+                </StackLayout>
+            </StackLayout>
+            <!-- Affichage en cas d'erreur API -->
+            <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" IsVisible="{Binding Path=TrelloError}" BackgroundColor="{StaticResource CardBackgroundColor}" Padding="20">
+                <Label Text="{Binding ErrorMsg}" HorizontalOptions="Center" Style="{StaticResource LabelTitle}"/>
+            </StackLayout>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             Title="IsiTrello"
+             x:Class="IsiTrello.SignIn">
+    <Grid>
+  <StackLayout Orientation="Vertical" HorizontalOptions="Center" VerticalOptions="Center">
+            <Label Text="Authentification" HorizontalTextAlignment="Center"  Style="{StaticResource LabelTitle}"/>
+            <Label Text="Afin de pouvoir consulter le contenu de cette application, il est nécessaire de s'identifier avec votre adresse Groupe Isia." HorizontalTextAlignment="Center" Style="{StaticResource LabelSubt}"/>
+            <Button Text="Connectez-vous" VerticalOptions="Center" HorizontalOptions="Center" 
+            Command="{Binding Path=SignInCmd}" Style="{StaticResource AttachBtn}"/>
+            <Label Text="L'application nécessite une connection active pour fonctionner." HorizontalTextAlignment="Center" TextColor="Red" Style="{StaticResource LabelSubt}" IsVisible="{Binding Path=noConnection}" />
+  </StackLayout>
+    <!-- Indicateur d'activité de la page -->
+    <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" IsVisible="{Binding Path=IsBusy}" BackgroundColor="#7F000000" >
+        <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"  BackgroundColor="{StaticResource CardBackgroundColor}" Padding="20">
+                <Label Text="Authentification en cours..." TextColor="Gray" HorizontalOptions="Center" />
+            <ActivityIndicator IsRunning="{Binding Path=IsBusy}" Color="Accent" />
+        </StackLayout>
+    </StackLayout>
+    </Grid>
+</ContentPage>

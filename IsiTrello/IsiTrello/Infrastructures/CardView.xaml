@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:IsiTrello.ViewModel;assembly=IsiTrello"
+             xmlns:infras="clr-namespace:IsiTrello.Infrastructures;assembly:IsiTrello"
+             xmlns:flv="clr-namespace:DLToolkit.Forms.Controls;assembly=DLToolkit.Forms.Controls.FlowListView"
+             x:Class="IsiTrello.CardView"
+             Title="{Binding Path=name}" x:Name="CardView">
+  
+  <ScrollView  HorizontalOptions="Start" VerticalOptions="Start" Padding="5,0,5,0" BackgroundColor="{StaticResource BackgroundColor}">
+    <StackLayout BackgroundColor="{StaticResource CardBackgroundColor}" Padding="5" VerticalOptions="Start" HorizontalOptions="Start">
+    <Label Text="{Binding Path=name}" HorizontalOptions="Center" VerticalOptions="Start" Style="{StaticResource LabelTitle}" />
+      <infras:ItemsStack ItemsSource="{Binding Path=labels}" Spacing="2"  VerticalOptions="Start" HorizontalOptions="Start"
+                                             BackgroundColor="{StaticResource CardBackgroundColor}" Orientation="Horizontal">
+        <infras:ItemsStack.ItemTemplate>
+				<DataTemplate>
+          <StackLayout HorizontalOptions="Fill" VerticalOptions="Fill" HeightRequest="40"
+                                       BackgroundColor="{Binding Path=color}" Margin="1">
+            <Label HorizontalTextAlignment="Center" VerticalTextAlignment="End" LineBreakMode="WordWrap" Text="{Binding Path=name}" TextColor="White"
+                   VerticalOptions="CenterAndExpand">
+              <Label.Font>
+                <OnPlatform x:TypeArguments="Font"
+                            Android="Bold, Medium"
+                            WinPhone="Bold, 11"
+                            iOS="Bold, 11"/>
+              </Label.Font>
+            </Label>
+          </StackLayout>
+				</DataTemplate>
+			</infras:ItemsStack.ItemTemplate>
+		</infras:ItemsStack>
+    <Label Text="{Binding Path=desc}" HorizontalOptions="Center" VerticalOptions="Start" />
+      <flv:FlowListView FlowColumnMinWidth="80" SeparatorVisibility="None" HasUnevenRows="False"
+			IsGroupingEnabled="false" RowHeight="40" IsVisible="{Binding Path=HasAttachment}"
+			FlowItemsSource="{Binding Path=attachments}"
+      BackgroundColor="{StaticResource CardBackgroundColor}"
+      HorizontalOptions="Center" VerticalOptions="Start">
+			<flv:FlowListView.FlowColumnTemplate>
+				<DataTemplate>
+          <Button HorizontalOptions="Fill" VerticalOptions="Fill" Text="{Binding Path=name}" BorderRadius="7"
+                  Command="{Binding Path=BindingContext.GoToAttachment, Source={x:Reference CardView}}" CommandParameter="{Binding Path=url}" >
+            <Button.Style>
+              <OnPlatform x:TypeArguments="Style"
+                                    WinPhone="{StaticResource AttachBtn}"
+                                    iOS="{StaticResource AttachBtn}"/>
+            </Button.Style>
+          </Button>
+				</DataTemplate>
+			</flv:FlowListView.FlowColumnTemplate>
+		</flv:FlowListView>
+      <StackLayout VerticalOptions="Start">
+       <ListView IsVisible="{Binding Path=HasChecklist}" ItemsSource="{Binding Path=checklists}" HasUnevenRows="True" BackgroundColor="{StaticResource CardBackgroundColor}"
+                 HorizontalOptions="Center" VerticalOptions="Start">
+        <ListView.ItemTemplate>
+           <DataTemplate>
+             <ViewCell>
+               <StackLayout>
+                 <Label Text="{Binding Path=namelist}" Style="{StaticResource LabelSubt}"/>
+               <Label Text="{Binding Path=listitems}" />
+               </StackLayout>
+             </ViewCell>
+                    
+                  </DataTemplate>
+        </ListView.ItemTemplate>
+      </ListView>
+    </StackLayout>
+  
+  </StackLayout>
+  </ScrollView>
+</ContentPage>

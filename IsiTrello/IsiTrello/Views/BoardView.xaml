@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:IsiTrello.ViewModel;assembly=IsiTrello"
+             xmlns:infras="clr-namespace:IsiTrello.Infrastructures;assembly:IsiTrello"
+             xmlns:controls="clr-namespace:CarouselView.FormsPlugin.Abstractions;assembly=CarouselView.FormsPlugin.Abstractions"
+             x:Class="IsiTrello.BoardView"
+             BackgroundColor="{StaticResource BackgroundColor}"
+             Title="{Binding BoardName}" x:Name="BoardV">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Name="Refresh" Command="{Binding Path=RefreshBoard}" Order="Primary">
+            <ToolbarItem.Icon>
+                <OnPlatform x:TypeArguments="FileImageSource"
+                        iOS="ic_action_autorenew"
+                        Android="ic_action_autorenew.png"
+                        WinPhone="ic_action_autorenew.png" />
+            </ToolbarItem.Icon>
+        </ToolbarItem>
+    </ContentPage.ToolbarItems>
+
+    <Grid >
+        <controls:CarouselViewControl ItemsSource="{Binding Path=Listes}" BackgroundColor="{StaticResource BackgroundColor}" VerticalOptions="FillAndExpand" Margin="5,0"
+                         Position="{Binding Position, Mode=OneWayToSource}" Orientation="Horizontal" ShowIndicators="True">
+            <controls:CarouselViewControl.ItemTemplate>
+                <DataTemplate>
+                    <StackLayout Padding="0,0,0,25">
+                        <!-- Intitulé des listes -->
+                        <StackLayout Margin="15,10">
+                            <Label Text="{Binding Path=name}" Style="{StaticResource LabelTitle}" HorizontalTextAlignment="Center"/>
+                        </StackLayout>
+                        <ListView ItemsSource="{Binding Path=cards}" SelectedItem="{Binding Path=BindingContext.SelectedCard, Source={x:Reference BoardV}, Mode=TwoWay}"
+                   HasUnevenRows="True"
+                   SeparatorVisibility="None"
+                   BackgroundColor="Transparent"
+                   HorizontalOptions="Fill" VerticalOptions="FillAndExpand" CachingStrategy="RecycleElement" >
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <ViewCell>
+                                        <ViewCell.View>
+                                            <Frame Padding="2"  Margin="2">
+                                                <Grid BackgroundColor="{StaticResource CardBackgroundColor}" Padding="3" VerticalOptions="Fill" HorizontalOptions="Fill">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition />
+                                                        <ColumnDefinition>
+                                                            <ColumnDefinition.Width>
+                                                                <OnPlatform x:TypeArguments="GridLength" iOS="0.3*" Android="0.3*" WinPhone="60"/>
+                                                            </ColumnDefinition.Width>
+                                                        </ColumnDefinition>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="26"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                    </Grid.RowDefinitions>
+                                                    <!-- Affichage des etiquettes s'il y a lieu -->
+                                                    <infras:GridView MaxColumns="5" ItemsSource="{Binding Path=labels}" Grid.Row ="0" Grid.Column="0" Grid.ColumnSpan="2"
+                                         BackgroundColor="{StaticResource CardBackgroundColor}" TileHeight="12" ColumnSpacing="2" RowSpacing="2" >
+                                                        <infras:GridView.ItemTemplate>
+                                                            <DataTemplate>
+                                                                <BoxView HorizontalOptions="Fill" VerticalOptions="Fill" HeightRequest="10"
+                                       Color="{Binding Path=color}" Margin="1"/>
+                                                            </DataTemplate>
+                                                        </infras:GridView.ItemTemplate>
+                                                    </infras:GridView>
+                                                    <!-- Titre de la carte -->
+                                                    <StackLayout HorizontalOptions="Fill" VerticalOptions="Start" Grid.Row="1" Grid.Column="0" BackgroundColor="Transparent">
+                                                        <Label Text="{Binding Path=name}" VerticalOptions="Fill" HorizontalOptions="Start" VerticalTextAlignment="Center" LineBreakMode="WordWrap"/>
+                                                    </StackLayout>
+                                                    <!-- Date echeance + coloration -->
+                                                    <StackLayout HorizontalOptions="Start" VerticalOptions="Start" Grid.Row="1" Grid.Column="1" BackgroundColor="Transparent">
+                                                        <Label Text="{Binding Path=due}" TextColor="Red" VerticalOptions="Start" HorizontalOptions="Start" VerticalTextAlignment="Start" >
+                                                            <Label.Font>
+                                                                <OnPlatform x:TypeArguments="Font" iOS="Small" Android="Medium" WinPhone="14"/>
+                                                            </Label.Font>
+                                                            <Label.Triggers>
+                                                                <DataTrigger TargetType="Label" Binding="{Binding Path=dueComplete}" Value="True">
+                                                                    <Setter Property="TextColor" Value="Green" />
+                                                                </DataTrigger>
+                                                            </Label.Triggers>
+                                                        </Label>
+                                                    </StackLayout>
+                                                </Grid>
+                                            </Frame>
+                                        </ViewCell.View>
+                                    </ViewCell>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </StackLayout>
+                </DataTemplate>
+            </controls:CarouselViewControl.ItemTemplate>
+        </controls:CarouselViewControl>
+        <!-- Indicateur d'activité de la page -->
+        <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" IsVisible="{Binding Path=IsBusy}" BackgroundColor="#7F000000" >
+            <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"  BackgroundColor="{StaticResource CardBackgroundColor}" Padding="20">
+                <Label Text="Loading..." TextColor="Gray" HorizontalOptions="Center" />
+                <ActivityIndicator IsRunning="{Binding Path=IsBusy}" Color="Accent" />
+            </StackLayout>
+        </StackLayout>
+        <!-- Affichage en cas d'erreur API -->
+        <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" IsVisible="{Binding Path=TrelloError}" BackgroundColor="{StaticResource CardBackgroundColor}" Padding="20">
+            <Label Text="Une erreur inattendue est survenue lors de la requête auprès du serveur Trello." HorizontalOptions="Center" Style="{StaticResource LabelTitle}"/>
+        </StackLayout>
+    </Grid>
+</ContentPage>

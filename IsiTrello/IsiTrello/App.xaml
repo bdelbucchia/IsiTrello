@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Application xmlns="http://xamarin.com/schemas/2014/forms"
+     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+      xmlns:viewmodels="clr-namespace:IsiTrello.ViewModel;assembly=IsiTrello"
+      xmlns:infrastructure="clr-namespace:IsiTrello.Infrastructures;assembly:IsiTrello"
+      xmlns:local="clr-namespace:IsiTrello;assembly:IsiTrello"
+      xmlns:cv="clr-namespace:Xamarin.Forms;assembly=Xamarin.Forms.CarouselView"
+     x:Class="IsiTrello.App">
+  <Application.Resources>
+    <ResourceDictionary>
+      <Color x:Key="BackgroundColor">#E0E0E0</Color>
+      <Color x:Key="CardBackgroundColor">#FAFAFA</Color>
+      <Style TargetType="Label">
+        <Setter Property="TextColor" Value="#424242"/>
+        <Setter Property="FontSize" Value="Small" />
+      </Style>
+      <Style x:Key="LabelTitle" TargetType="Label" >
+        <Setter Property="TextColor" Value="#424242"/>
+        <Setter Property="FontSize" Value="Large"/>
+        <Setter Property="FontAttributes" Value="Bold" />
+      </Style>
+      <OnPlatform x:TypeArguments="Font" Android="Medium" iOS="Medium" WinPhone="Small" x:Key="SubtFontSize" />
+      <Style x:Key="LabelSubt" TargetType="Label" >
+        <Setter Property="TextColor" Value="#424242"/>
+        <Setter Property="FontSize" Value="{StaticResource SubtFontSize}"/>
+        <Setter Property="FontAttributes" Value="None" />
+      </Style>
+      <OnPlatform x:TypeArguments="Font" Android="Medium" iOS="Micro" WinPhone="Micro" x:Key="DueFontSize" />
+      <Style x:Key="LabelDue" TargetType="Label" >
+        <Setter Property="FontSize" Value="{StaticResource DueFontSize}"/>
+        <Setter Property="FontAttributes" Value="None" />
+      </Style>
+      <Style x:Key="AttachBtn" TargetType="Button">
+        <Setter Property="BackgroundColor" Value="#E0E0E0"/>
+      </Style>
+      <infrastructure:CheckToImage x:Key="CheckToImage"/>
+    </ResourceDictionary>
+  </Application.Resources>
+</Application>
